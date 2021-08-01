@@ -1,0 +1,22 @@
+{
+  "name": "Servo",
+  "keywords": "Servo, opendrain, stm32, arm, hal",
+  "description": "Unofficial repository to handle Servo(s) on Open Drain pins",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/tpruvot/STM32_Servo_OpenDrain.git"
+  },
+  "version": "1.1.2-OD",
+  "authors":
+  [
+    {
+        "url": "https://github.com/tpruvot",
+        "maintainer": false,
+        "email": "tpruvot@github",
+        "name": "Tanguy Pruvot"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "ststm32"
+}
