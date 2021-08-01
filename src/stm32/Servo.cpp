@@ -198,7 +198,7 @@ bool Servo::attached()
 
 #else
 
-#warning "TIMER_TONE or HAL_TIM_MODULE_ENABLED not defined"
+#warning "TIMER_SERVO or HAL_TIM_MODULE_ENABLED not defined"
 Servo::Servo() {}
 uint8_t Servo::attach(int pin)
 {
