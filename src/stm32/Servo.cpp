@@ -50,7 +50,7 @@ static void Servo_PeriodElapsedCallback()
     CumulativeCountSinceRefresh = 0;
   } else {
     if (timerChannel[timer_id] < ServoCount && servos[timerChannel[timer_id]].Pin.isActive == true) {
-      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, LOW); // pulse this channel low if activated
+      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, HIGH); // pulse this channel low if activated = 1 in OD
     }
   }
 
@@ -60,7 +60,7 @@ static void Servo_PeriodElapsedCallback()
     CumulativeCountSinceRefresh += servos[timerChannel[timer_id]].ticks;
     if (servos[timerChannel[timer_id]].Pin.isActive == true) {
       // check if activated
-      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, HIGH); // its an active channel so pulse it high
+      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, LOW); // its an active channel so pulse it high = 0 in OD
     }
   } else {
     // finished all channels so wait for the refresh period to expire before starting over
@@ -119,7 +119,7 @@ uint8_t Servo::attach(int pin, int value)
 uint8_t Servo::attach(int pin, int min, int max, int value)
 {
   if (this->servoIndex < MAX_SERVOS) {
-    pinMode(pin, OUTPUT);                                   // set servo pin to output
+    pinMode(pin, OUTPUT_OPEN_DRAIN); // set servo pin to open drain output (Originally OUTPUT)
     servos[this->servoIndex].Pin.nbr = pin;
     write(value);
     // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
