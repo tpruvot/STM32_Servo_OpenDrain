@@ -37,6 +37,23 @@ uint8_t ServoCount = 0;                                    // the total number o
 #define TIMER_ID(_timer) ((timer_id_e)(_timer))
 #define SERVO_TIMER(_timer_id)  ((timer16_Sequence_t)(_timer_id))
 
+
+/************ OPEN DRAIN TOGGLE FLAG ****************************************/
+
+#ifndef SERVO_OPEN_DRAIN
+  #define SERVO_OPEN_DRAIN 1 // default open drain for this repo to avoid cmdline defines...
+#endif
+
+#if SERVO_OPEN_DRAIN
+  #define PULSE_OFF HIGH
+  #define PULSE_ON  LOW
+  #define SERVO_PIN_MODE OUTPUT_OPEN_DRAIN
+#else
+  #define PULSE_OFF LOW
+  #define PULSE_ON  HIGH
+  #define SERVO_PIN_MODE OUTPUT
+#endif
+
 /************ static functions common to all instances ***********************/
 
 volatile uint32_t CumulativeCountSinceRefresh = 0;
@@ -50,7 +67,7 @@ static void Servo_PeriodElapsedCallback()
     CumulativeCountSinceRefresh = 0;
   } else {
     if (timerChannel[timer_id] < ServoCount && servos[timerChannel[timer_id]].Pin.isActive == true) {
-      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, HIGH); // pulse this channel low if activated = 1 in OD
+      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, PULSE_OFF); // pulse this channel low if activated = 1 in OD
     }
   }
 
@@ -60,7 +77,7 @@ static void Servo_PeriodElapsedCallback()
     CumulativeCountSinceRefresh += servos[timerChannel[timer_id]].ticks;
     if (servos[timerChannel[timer_id]].Pin.isActive == true) {
       // check if activated
-      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, LOW); // its an active channel so pulse it high = 0 in OD
+      digitalWrite(servos[timerChannel[timer_id]].Pin.nbr, PULSE_ON); // its an active channel so pulse it high = 0 in OD
     }
   } else {
     // finished all channels so wait for the refresh period to expire before starting over
@@ -119,7 +136,7 @@ uint8_t Servo::attach(int pin, int value)
 uint8_t Servo::attach(int pin, int min, int max, int value)
 {
   if (this->servoIndex < MAX_SERVOS) {
-    pinMode(pin, OUTPUT_OPEN_DRAIN); // set servo pin to open drain output (Originally OUTPUT)
+    pinMode(pin, SERVO_PIN_MODE); // set servo pin to output or open drain output
     servos[this->servoIndex].Pin.nbr = pin;
     write(value);
     // todo min/max check: abs(min - MIN_PULSE_WIDTH) /4 < 128
